@@ -6,44 +6,36 @@ var viewsize
 func _ready() -> void:
 	print(poly.texture.get_size())
 	viewsize = get_viewport_rect().size
-	var first_point = vert.instantiate()
-	first_point.position = Vector2(150,150)
-	add_child(first_point)
-	var second_point = vert.instantiate()
-	second_point.position = Vector2(150,300)
-	add_child(second_point)
-	var third_point = vert.instantiate()
-	third_point.position = Vector2(250,300)
-	add_child(third_point)
 	
-	edges = [
-		[first_point,second_point],
-		[second_point,third_point],
-		[third_point,first_point]
-	]
+	
+	
 var prev: Node2D = null
 var edges = []
+ 
 func _unhandled_input(event: InputEvent) -> void:
-	#if event is InputEventMouseButton:
-		#
-		#if event.button_index == MOUSE_BUTTON_LEFT:
-			## create a vertex
-			#var new_vert = vert.instantiate()
-			#new_vert.position = event.position
-			#add_child(new_vert)
-			#if prev:
-				#edges.push_back([prev,new_vert])
-				#prev = new_vert
-			#else:
-				#prev = new_vert
+	if event is InputEventMouseButton:
+		
+		if event.button_index == MOUSE_BUTTON_LEFT and event.double_click:
+			# create a vertex
+			var new_vert = vert.instantiate()
+			new_vert.position = event.position
+			add_child(new_vert)
+			if prev:
+				edges.push_back([prev,new_vert])
+				prev = new_vert
+			else:
+				prev = new_vert
 	if event is InputEventMouseMotion:
-		if edges.size() > 0:
+		if edges.size() > 1:
 			print()
 			# check intersections of all the edges in cardinal directions from the point on the screen
 			# make a vector at this current position,
 			var directions = [[200,0.01],[0.01,200],[-200,0.01],[0.01,-200]]
 			#var directions = [[0.01,200]]
-			for edge in edges:
+			var closed =  edges + [
+				[edges[-1][1],edges[0][0]]
+			]
+			for edge in closed:
 				for dir in directions: 
 					var e2 = event.position +Vector2(randf()/100,randf()/100)
 					var e1 = Vector2(e2.x + dir[0],e2.y +dir[1]) +  Vector2(randf()/100,randf()/100)
