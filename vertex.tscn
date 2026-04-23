@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://bffue1w2sde6s"]
+
+[ext_resource type="Script" uid="uid://ba4ye8s6lr5ve" path="res://vertex.gd" id="1_bqu4f"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_k2uon"]
+
+[node name="Node2D" type="Node2D" unique_id=757629393]
+script = ExtResource("1_bqu4f")
+
+[node name="Area2D" type="Area2D" parent="." unique_id=103337008]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=263330075]
+shape = SubResource("CircleShape2D_k2uon")
+
+[node name="Polygon2D" type="Polygon2D" parent="." unique_id=461993486]
+offset = Vector2(-13.65, 28.3)
+polygon = PackedVector2Array(5.880785, -33.09493, 9.7880745, -38.174404, 21.509945, -35.048573, 21.509945, -26.843264, 16.821196, -17.465769, 5.490056, -21.373058)
+uv = PackedVector2Array(-6, -40, 4, -53, 34, -45, 34, -24, 22, 0, -7, -10)
+
+[connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Area2D" to="." method="_on_area_2d_mouse_exited"]
