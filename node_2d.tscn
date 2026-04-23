@@ -14,4 +14,5 @@ uv = PackedVector2Array(0, 0, 0, 0, 0, 1, 1, 1)
 [node name="Button" type="Button" parent="." unique_id=2074719527]
 offset_right = 8.0
 offset_bottom = 8.0
+toggle_mode = true
 text = "inner"

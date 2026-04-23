@@ -25,7 +25,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				prev = new_vert
 			else:
 				prev = new_vert
-	if event is InputEventMouseMotion:
+	if event is InputEventMouseMotion and innerButton.is_pressed():
 		if edges.size() > 1:
 			print()
 			# check intersections of all the edges in cardinal directions from the point on the screen
