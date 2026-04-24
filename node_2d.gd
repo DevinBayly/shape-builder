@@ -11,7 +11,8 @@ func _ready() -> void:
 	
 var prev: Node2D = null
 var edges = []
- 
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		
@@ -51,19 +52,23 @@ func _unhandled_input(event: InputEvent) -> void:
 					var im = (i2.y - i1.y)/(i2.x - i1.x)
 					if abs(em - im) >.001:
 						var intersection_x = (-i1.y + e1.y -e1.x*em + i1.x*im)/(im - em)
-						print("intersection x is",intersection_x)
+						#print("intersection x is",intersection_x)
 						var intersection_y = im*(intersection_x - i1.x) + i1.y
-						print("intersection y is ",intersection_y)
-						# if it's bigger than viewport lets skip trying to draw it
-						if (intersection_x >0 and intersection_x < viewsize.x) and ( intersection_y >0 and intersection_y < viewsize.y):
-								
+						#print("intersection y is ",intersection_y)
+						var intercept = Vector2(intersection_x,intersection_y)
+						
+						
+						if (i1.x < intercept.x and intercept.x < i2.x) or (i2.x < intercept.x and intercept.x < i1.x):
+							# check for ccw because that will only happen if the intersection is between 
+							# using algorithm from bryce boe
+							
 							var mark = ColorRect.new()
 							mark.size = Vector2(5,5)
 							mark.color = Color("green")
-							mark.position = Vector2(intersection_x,intersection_y)
+							mark.position = intercept
 							add_child(mark)
 					else:
-						print("this edge is too parallel to one of the cardinal directions")
+						#print("this edge is too parallel to one of the cardinal directions")
 						continue
 					
 		

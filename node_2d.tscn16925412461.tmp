@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://b2ejqxv8kaafr"]
+
+[ext_resource type="Script" uid="uid://bd0e3jl0vi8uv" path="res://node_2d.gd" id="1_wtcfe"]
+[ext_resource type="Texture2D" uid="uid://cc8leqm7xlfdd" path="res://icon.svg" id="2_0e48y"]
+
+[node name="Node2D" type="Node2D" unique_id=1793098875]
+script = ExtResource("1_wtcfe")
+
+[node name="Polygon2D" type="Polygon2D" parent="." unique_id=462235959]
+texture = ExtResource("2_0e48y")
+polygon = PackedVector2Array(0, 0, 0, 32.000004, 0, 128, 88.00006, 128)
+uv = PackedVector2Array(0, 0, 0, 0, 0, 1, 1, 1)
+
+[node name="Button" type="Button" parent="." unique_id=2074719527]
+offset_right = 8.0
+offset_bottom = 8.0
+toggle_mode = true
+text = "inner"
