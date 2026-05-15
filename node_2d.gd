@@ -18,14 +18,18 @@ func _unhandled_input(event: InputEvent) -> void:
 		
 		if event.button_index == MOUSE_BUTTON_LEFT and event.double_click:
 			# create a vertex
+			
+		
 			var new_vert = vert.instantiate()
 			new_vert.position = event.position
 			add_child(new_vert)
-			if prev:
-				edges.push_back([prev,new_vert])
-				prev = new_vert
-			else:
-				prev = new_vert
+			# this just makes sure we have a list of the edges
+			if not innerButton.is_pressed():
+				if prev:
+					edges.push_back([prev,new_vert])
+					prev = new_vert
+				else:
+					prev = new_vert
 			if innerButton.is_pressed():
 				# how can we make sure the right point relations get made?
 				for intersect in last_intersections:
