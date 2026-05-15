@@ -17,5 +17,6 @@ offset = Vector2(-13.65, 28.3)
 polygon = PackedVector2Array(5.880785, -33.09493, 9.7880745, -38.174404, 21.509945, -35.048573, 21.509945, -26.843264, 16.821196, -17.465769, 5.490056, -21.373058)
 uv = PackedVector2Array(-6, -40, 4, -53, 34, -45, 34, -24, 22, 0, -7, -10)
 
+[connection signal="input_event" from="Area2D" to="." method="_on_area_2d_input_event"]
 [connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]
 [connection signal="mouse_exited" from="Area2D" to="." method="_on_area_2d_mouse_exited"]

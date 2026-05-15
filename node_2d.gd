@@ -2,36 +2,37 @@ extends Node2D
 var vert = preload("res://vertex.tscn")
 @onready var poly: Polygon2D = $Polygon2D
 @onready var innerButton: Button = $Button
-@onready var m: MeshInstance2D = $MeshInstance2D
+@onready var tri_button: Button = $tri_button
 var viewsize
-func _ready() -> void:
-
+func create_colored_geometry(verts):
+	var vpos = []
+	for vert in verts:
+		vpos.push_back(vert.position)
 	var vertices = PackedVector2Array()
-	vertices.push_back(Vector2(0, 100))
-	vertices.push_back(Vector2(100, 0))
-	vertices.push_back(Vector2(0, 0))
+	var uvs = PackedVector2Array()
+
+	for v in vpos:
+		vertices.push_back(v)
+		uvs.push_back(Vector2(0, 0))
 
 	# Initialize the ArrayMesh.
 	var arr_mesh = ArrayMesh.new()
 	var arrays = []
 	arrays.resize(Mesh.ARRAY_MAX)
-	print(arrays.size())
 	arrays[Mesh.ARRAY_VERTEX] = vertices
-	var uvs = PackedVector2Array()
-	uvs.push_back(Vector2(0, 1))
-	uvs.push_back(Vector2(1, 0))
-	uvs.push_back(Vector2(0, 0))
+	
 	arrays[Mesh.ARRAY_TEX_UV] = uvs
 	
-
 	# Create the Mesh.
 	arr_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-	
-	
+	var m = MeshInstance2D.new()
 	m.mesh = arr_mesh
-	# make a new material from scratch
-
+	# make this a random color
 	m.modulate = Color(randf(),randf(),randf())
+	add_child(m)
+	
+func _ready() -> void:
+	pass
 	
 	
 var prev: Node2D = null
@@ -39,6 +40,24 @@ var edges = []
 var dist_threshold = 50
 var last_intersections = []
 var all_vertx: Array[Vector2] = []
+var triangle_vertices=[]
+func vert_was_clicked(vertex):
+	if tri_button.is_pressed():
+		# tell it to stay colored
+		vertex.tri_clicked()
+		triangle_vertices.push_back(vertex)
+		if triangle_vertices.size()==3:
+			create_colored_geometry(triangle_vertices)
+			_on_clear_pressed()
+
+func _on_clear_pressed() -> void:
+	#clear the triangle list
+	for v in triangle_vertices:
+		# turn off their selection colors
+		v.tri_cleared()
+	triangle_vertices = []
+	pass # Replace with function body.
+	
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		
@@ -47,6 +66,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			
 		
 			var new_vert = vert.instantiate()
+			# wire up the signal listener for vert clicks
+			new_vert.vertexclicked.connect(vert_was_clicked)
 			new_vert.position = event.position
 			add_child(new_vert)
 			# this just makes sure we have a list of the edges
@@ -69,9 +90,11 @@ func _unhandled_input(event: InputEvent) -> void:
 					if too_close:
 						continue
 					var new_intersect_vert = vert.instantiate()
+					new_intersect_vert.vertexclicked.connect(vert_was_clicked)
 					new_intersect_vert.position = intersect
 					add_child(new_intersect_vert)
 					all_vertx.push_back(intersect)
+					
 	if event is InputEventMouseMotion and innerButton.is_pressed():
 		last_intersections=[]
 		if edges.size() > 1:
