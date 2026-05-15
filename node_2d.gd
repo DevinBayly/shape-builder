@@ -2,11 +2,36 @@ extends Node2D
 var vert = preload("res://vertex.tscn")
 @onready var poly: Polygon2D = $Polygon2D
 @onready var innerButton: Button = $Button
+@onready var m: MeshInstance2D = $MeshInstance2D
 var viewsize
 func _ready() -> void:
-	print(poly.texture.get_size())
-	viewsize = get_viewport_rect().size
+
+	var vertices = PackedVector2Array()
+	vertices.push_back(Vector2(0, 100))
+	vertices.push_back(Vector2(100, 0))
+	vertices.push_back(Vector2(0, 0))
+
+	# Initialize the ArrayMesh.
+	var arr_mesh = ArrayMesh.new()
+	var arrays = []
+	arrays.resize(Mesh.ARRAY_MAX)
+	print(arrays.size())
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	var uvs = PackedVector2Array()
+	uvs.push_back(Vector2(0, 1))
+	uvs.push_back(Vector2(1, 0))
+	uvs.push_back(Vector2(0, 0))
+	arrays[Mesh.ARRAY_TEX_UV] = uvs
 	
+
+	# Create the Mesh.
+	arr_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	
+	
+	m.mesh = arr_mesh
+	# make a new material from scratch
+
+	m.modulate = Color(randf(),randf(),randf())
 	
 	
 var prev: Node2D = null
