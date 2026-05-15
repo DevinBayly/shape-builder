@@ -12,7 +12,7 @@ func _ready() -> void:
 var prev: Node2D = null
 var edges = []
 
-
+var last_intersections = []
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		
@@ -26,7 +26,15 @@ func _unhandled_input(event: InputEvent) -> void:
 				prev = new_vert
 			else:
 				prev = new_vert
+			if innerButton.is_pressed():
+				# how can we make sure the right point relations get made?
+				for intersect in last_intersections:
+					var new_intersect_vert = vert.instantiate()
+					new_intersect_vert.position = intersect
+					add_child(new_intersect_vert)
+					
 	if event is InputEventMouseMotion and innerButton.is_pressed():
+		last_intersections=[]
 		if edges.size() > 1:
 			print()
 			# check intersections of all the edges in cardinal directions from the point on the screen
@@ -67,6 +75,9 @@ func _unhandled_input(event: InputEvent) -> void:
 							mark.color = Color("green")
 							mark.position = intercept
 							add_child(mark)
+							# add intercepts to lastPoint_positions
+							last_intersections.push_back(intercept)
+							
 					else:
 						#print("this edge is too parallel to one of the cardinal directions")
 						continue
