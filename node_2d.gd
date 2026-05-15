@@ -11,8 +11,9 @@ func _ready() -> void:
 	
 var prev: Node2D = null
 var edges = []
-
+var dist_threshold = 50
 var last_intersections = []
+var all_vertx: Array[Vector2] = []
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		
@@ -24,6 +25,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			new_vert.position = event.position
 			add_child(new_vert)
 			# this just makes sure we have a list of the edges
+			all_vertx.push_back(event.position)
 			if not innerButton.is_pressed():
 				if prev:
 					edges.push_back([prev,new_vert])
@@ -33,10 +35,18 @@ func _unhandled_input(event: InputEvent) -> void:
 			if innerButton.is_pressed():
 				# how can we make sure the right point relations get made?
 				for intersect in last_intersections:
+					var too_close = false
+					# check whether or not the intersection is too close to a pre-existing point
+					for overt in all_vertx:
+						if overt.distance_to(intersect) < dist_threshold:
+							too_close = true
+							break
+					if too_close:
+						continue
 					var new_intersect_vert = vert.instantiate()
 					new_intersect_vert.position = intersect
 					add_child(new_intersect_vert)
-					
+					all_vertx.push_back(intersect)
 	if event is InputEventMouseMotion and innerButton.is_pressed():
 		last_intersections=[]
 		if edges.size() > 1:
