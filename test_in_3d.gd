@@ -83,7 +83,7 @@ func _physics_process(delta: float) -> void:
 
 var prev: Node3D = null
 var edges = []
-var dist_threshold = 50
+var dist_threshold = 1
 var last_intersections = []
 var all_vertx: Array[Vector3] = []
 var triangle_vertices=[]
@@ -114,7 +114,7 @@ func _input(event: InputEvent) -> void:
                     # how can we make sure the right point relations get made?
                     # intersections will all be 2d so we need to add a third value
                     var cam = get_viewport().get_camera_3d()
-                    var depth=15
+                    var depth=8
                     for intersect in last_intersections:
                         var intersect_3d = cam.project_position(intersect,depth)
                         var too_close = false
