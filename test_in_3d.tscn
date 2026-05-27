@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://e8a3a86bmtfy"]
+
+[ext_resource type="PackedScene" uid="uid://cc1m2a1obsyn4" path="res://addons/fpc/character.tscn" id="1_0nhq1"]
+[ext_resource type="Script" uid="uid://6ashm4vo0bse" path="res://test_in_3d.gd" id="1_bh3cg"]
+[ext_resource type="PackedScene" uid="uid://uio1i5be8av0" path="res://vert_3d.tscn" id="3_jt4q5"]
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_bh3cg"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_0nhq1"]
+size = Vector2(19.895, 19.79)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_bh3cg"]
+
+[sub_resource type="Sky" id="Sky_jt4q5"]
+sky_material = SubResource("ProceduralSkyMaterial_bh3cg")
+
+[sub_resource type="Environment" id="Environment_orqyl"]
+background_mode = 2
+sky = SubResource("Sky_jt4q5")
+
+[node name="test_in_3d" type="Node3D" unique_id=216157647]
+script = ExtResource("1_bh3cg")
+
+[node name="wall" type="Area3D" parent="." unique_id=768319096]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -10.018518)
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="wall" unique_id=1956670534]
+shape = SubResource("WorldBoundaryShape3D_bh3cg")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="wall" unique_id=1697309635]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
+mesh = SubResource("QuadMesh_0nhq1")
+
+[node name="floor" type="StaticBody3D" parent="." unique_id=414307982]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="floor" unique_id=808105808]
+shape = SubResource("WorldBoundaryShape3D_bh3cg")
+
+[node name="Character" parent="." unique_id=532105912 instance=ExtResource("1_0nhq1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="Character/Head/Camera" index="0" unique_id=1580753883]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0051853657, 0)
+target_position = Vector3(0, 0, -15)
+collide_with_areas = true
+collide_with_bodies = false
+debug_shape_custom_color = Color(0.5137255, 1, 0.007843138, 1)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=113584904]
+environment = SubResource("Environment_orqyl")
+
+[node name="vert_3d" parent="." unique_id=1370350870 instance=ExtResource("3_jt4q5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4326644, 1.5882406, -7.751133)
+
+[editable path="Character"]

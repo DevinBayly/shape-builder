@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://bkx2c7apcwk6g"]
+
+[ext_resource type="Script" uid="uid://jtuniymvyjcf" path="res://test_collision.gd" id="1_pim0p"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pim0p"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_yml0y"]
+
+[node name="test_collision" type="Node3D" unique_id=575551930]
+script = ExtResource("1_pim0p")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1730634063]
+transform = Transform3D(0.9965349, -0.019760774, 0.08079467, 0.017799435, 0.9995309, 0.024924267, -0.08124929, -0.023399802, 0.99641913, 0.22000587, 0, -2.2320697)
+
+[node name="RayCast3D" type="RayCast3D" parent="Camera3D" unique_id=1163025928]
+transform = Transform3D(1, 2.4447218e-09, 7.450581e-09, 5.820766e-10, 1.0000002, 1.8626451e-09, 7.450581e-09, 1.8626451e-09, 1.0000001, -0.029929206, -0.008619614, 0.3670435)
+target_position = Vector3(0, 0, -5)
+collision_mask = 2
+collide_with_areas = true
+
+[node name="Area3D" type="Area3D" parent="." unique_id=376764777]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.992321)
+collision_layer = 0
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=1969674395]
+shape = SubResource("BoxShape3D_pim0p")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Area3D" unique_id=1982383477]
+mesh = SubResource("SphereMesh_yml0y")
