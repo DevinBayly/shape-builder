@@ -18,7 +18,7 @@ func _physics_process(delta: float) -> void:
     limiter-=delta
     if col and limiter<0:
         limiter = limiter_restart
-        print("collision is ",col)
+        #print("collision is ",col)
         intersector.position = col_pos
     
 
@@ -122,10 +122,12 @@ func _input(event: InputEvent) -> void:
                            # use global coordinates, not local to node
                         var from = cam.project_ray_origin(intersect)
                         var rect = get_viewport().get_visible_rect()
-                        var to = cam.project_ray_normal(Vector2(rect.size.x/2,rect.size.y/2+20))*depth + from
+                        var to = cam.project_ray_normal(intersect)*depth + from
                         ray_to.position = to
                         #var to = Vector3(0,0,-20)
                         var query = PhysicsRayQueryParameters3D.create(from,to)
+                        query.collide_with_areas =true
+                        query.collide_with_bodies=false
                         var result = space_state.intersect_ray(query)
                         var intersect_3d = result["position"]
                        
