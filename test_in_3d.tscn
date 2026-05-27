@@ -5,7 +5,12 @@
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_bh3cg"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bh3cg"]
+transparency = 1
+albedo_color = Color(1, 1, 1, 0.4392157)
+
 [sub_resource type="QuadMesh" id="QuadMesh_0nhq1"]
+material = SubResource("StandardMaterial3D_bh3cg")
 size = Vector2(19.895, 19.79)
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_bh3cg"]
@@ -24,6 +29,12 @@ radius = 0.2
 radius = 0.2
 height = 0.4
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jt4q5"]
+albedo_color = Color(0.2676908, 0.7843832, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_orqyl"]
+material = SubResource("StandardMaterial3D_jt4q5")
+
 [node name="test_in_3d" type="Node3D" unique_id=216157647]
 script = ExtResource("1_bh3cg")
 limiter_restart = 0.5
@@ -36,7 +47,6 @@ shape = SubResource("WorldBoundaryShape3D_bh3cg")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="wall" unique_id=1697309635]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
-visible = false
 mesh = SubResource("QuadMesh_0nhq1")
 
 [node name="floor" type="StaticBody3D" parent="." unique_id=414307982]
@@ -96,6 +106,9 @@ offset_right = 75.0
 offset_bottom = 125.0
 text = "draw im
 "
+
+[node name="ray_to" type="MeshInstance3D" parent="." unique_id=60533474]
+mesh = SubResource("SphereMesh_orqyl")
 
 [connection signal="input_event" from="wall" to="." method="_on_wall_input_event"]
 

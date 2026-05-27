@@ -3,7 +3,7 @@ extends Node3D
 @onready var intersector = $intersector
 var vert3d = preload("res://vert_3d.tscn")
 var limiter=0
-@onready var poly: Polygon2D = $Polygon2D
+@onready var ray_to = $ray_to
 @onready var innerButton: Button = $Button
 @onready var tri_button: Button = $tri_button
 @export var limiter_restart:float =3
@@ -113,10 +113,22 @@ func _input(event: InputEvent) -> void:
                 if innerButton.is_pressed():
                     # how can we make sure the right point relations get made?
                     # intersections will all be 2d so we need to add a third value
-                    var cam = get_viewport().get_camera_3d()
-                    var depth=8
+                    var cam: Camera3D = get_viewport().get_camera_3d()
+                    var depth=20
                     for intersect in last_intersections:
-                        var intersect_3d = cam.project_position(intersect,depth)
+                       
+                        # do a physics calculation of intersection of new ray 
+                        var space_state = get_world_3d().direct_space_state
+                           # use global coordinates, not local to node
+                        var from = cam.project_ray_origin(intersect)
+                        var rect = get_viewport().get_visible_rect()
+                        var to = cam.project_ray_normal(Vector2(rect.size.x/2,rect.size.y/2+20))*depth + from
+                        ray_to.position = to
+                        #var to = Vector3(0,0,-20)
+                        var query = PhysicsRayQueryParameters3D.create(from,to)
+                        var result = space_state.intersect_ray(query)
+                        var intersect_3d = result["position"]
+                       
                         var too_close = false
                         # check whether or not the intersection is too close to a pre-existing point
                         for overt in all_vertx:
