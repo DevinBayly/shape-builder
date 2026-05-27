@@ -2,7 +2,6 @@
 
 [ext_resource type="PackedScene" uid="uid://cc1m2a1obsyn4" path="res://addons/fpc/character.tscn" id="1_0nhq1"]
 [ext_resource type="Script" uid="uid://6ashm4vo0bse" path="res://test_in_3d.gd" id="1_bh3cg"]
-[ext_resource type="PackedScene" uid="uid://uio1i5be8av0" path="res://vert_3d.tscn" id="3_jt4q5"]
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_bh3cg"]
 
@@ -18,12 +17,18 @@ sky_material = SubResource("ProceduralSkyMaterial_bh3cg")
 background_mode = 2
 sky = SubResource("Sky_jt4q5")
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_bh3cg"]
+radius = 0.2
+
+[sub_resource type="SphereMesh" id="SphereMesh_jt4q5"]
+radius = 0.2
+height = 0.4
+
 [node name="test_in_3d" type="Node3D" unique_id=216157647]
 script = ExtResource("1_bh3cg")
 
 [node name="wall" type="Area3D" parent="." unique_id=768319096]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -10.018518)
-collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="wall" unique_id=1956670534]
 shape = SubResource("WorldBoundaryShape3D_bh3cg")
@@ -51,7 +56,45 @@ debug_shape_custom_color = Color(0.5137255, 1, 0.007843138, 1)
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=113584904]
 environment = SubResource("Environment_orqyl")
 
-[node name="vert_3d" parent="." unique_id=1370350870 instance=ExtResource("3_jt4q5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4326644, 1.5882406, -7.751133)
+[node name="intersector" type="Area3D" parent="." unique_id=1946995526]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="intersector" unique_id=383974059]
+shape = SubResource("SphereShape3D_bh3cg")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="intersector" unique_id=1688686683]
+mesh = SubResource("SphereMesh_jt4q5")
+
+[node name="Button" type="Button" parent="." unique_id=280294680]
+offset_right = 8.0
+offset_bottom = 8.0
+toggle_mode = true
+text = "inner"
+
+[node name="tri_button" type="Button" parent="." unique_id=191226636]
+offset_left = 1.0
+offset_top = 31.0
+offset_right = 50.0
+offset_bottom = 62.0
+toggle_mode = true
+text = "make tri"
+
+[node name="clear" type="Button" parent="." unique_id=830236104]
+offset_left = 2.0
+offset_top = 63.0
+offset_right = 75.0
+offset_bottom = 94.0
+text = "clear"
+
+[node name="drawim" type="Button" parent="." unique_id=1720690027]
+offset_left = 2.0
+offset_top = 94.0
+offset_right = 75.0
+offset_bottom = 125.0
+text = "draw im
+"
+
+[connection signal="input_event" from="wall" to="." method="_on_wall_input_event"]
 
 [editable path="Character"]

@@ -1,6 +1,6 @@
 extends Node3D
 
-@onready var mark = $mark
+@onready var mark: MeshInstance3D = $mark
 signal vertexclicked
 var included_in_tri = false
 func tri_clicked():
@@ -11,9 +11,11 @@ func tri_cleared():
 	turn_off()
 func turn_on():
 	
-	mark.material.albedo_color = Color("red")
+	var mat : StandardMaterial3D = mark.get_active_material(0)
+	mat.albedo_color = Color("red")
 func turn_off():
-	mark.material.albedo_color = Color("white")
+	var mat : StandardMaterial3D = mark.get_active_material(0)
+	mat.albedo_color = Color("white")
 
 func _on_area_2d_mouse_entered() -> void:
 	if not included_in_tri:
@@ -50,3 +52,9 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 		#pass
 	#pass # Replace with function body.
 	#pass # Replace with function body.
+
+
+func _on_area_3d_area_exited(area: Area3D) -> void:
+	print("exited ",area)
+	turn_off()
+	pass # Replace with function body.
