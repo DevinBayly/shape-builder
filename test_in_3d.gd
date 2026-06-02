@@ -257,6 +257,7 @@ func _on_drawim_pressed() -> void:
 			
 			var mat: StandardMaterial3D = StandardMaterial3D.new()
 			mat.albedo_texture = testicon
+			mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 			mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 			mesh.surface_set_material(0,mat)
 			m.mesh = mesh
