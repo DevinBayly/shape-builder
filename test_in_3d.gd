@@ -6,7 +6,10 @@ var limiter=0
 @onready var innerButton: Button = $Button
 @onready var tri_button: Button = $tri_button
 @export var limiter_restart:float =3
+@onready var testicon = preload("res://icon.svg")
+var cam
 func _ready() -> void:
+	cam = get_viewport().get_camera_3d()
 	pass
 
 var col
@@ -196,3 +199,66 @@ func _on_clear_pressed() -> void:
 		v.tri_cleared()
 	triangle_vertices = []
 	pass # Replace with function body.
+
+func _on_drawim_pressed() -> void:
+	# go get all the other mesh2ds 
+	# find the min and max of all their points
+	# go back through each and update it's texture coordinates, and add a texture to the shape
+	# OR
+	# make one big ass mesh using all the triangles, and set all the uvs to correct values, and then at the end just assign a single texture
+	var meshes = get_children()
+	print("trying something different")
+	var minx = get_viewport().get_visible_rect().size.x + 500
+	var miny = get_viewport().get_visible_rect().size.y + 500
+	var maxx = -100
+	var maxy = -100
+	for m in meshes:
+		if m is MeshInstance3D:
+			var mesh:ArrayMesh = m.mesh
+			# iterate over the vertices in the triangle
+			var mesh_array = mesh.surface_get_arrays(0)
+			var vertices = mesh_array[Mesh.ARRAY_VERTEX]
+			
+			for v3d in vertices:
+				# convert back to the screen coordinates
+				var v = cam.unproject_position(v3d)
+				if v.x >maxx:
+					maxx = v.x
+				if v.x < minx:
+					minx= v.x
+				if v.y <miny:
+					miny = v.y
+				if v.y > maxy:
+					maxy=v.y
+	print("min ",minx," ",miny," and max values ",maxx," ",maxy)
+	# use the min and max values to help us establish uv coordinates
+	for m in meshes:
+		if m is MeshInstance3D:
+			var mesh:ArrayMesh = m.mesh
+			# iterate over the vertices in the triangle
+			var mesh_array = mesh.surface_get_arrays(0)
+			var vertices = mesh_array[Mesh.ARRAY_VERTEX]
+			var uvs = mesh_array[Mesh.ARRAY_TEX_UV]
+			var i=0
+			for v3d in vertices:
+				var v = cam.unproject_position(v3d)
+				print("vertex", v)
+				# normalize the v and store that as the uv coordinate
+				var normv = Vector2((maxx - v.x)/(maxx - minx),(maxy - v.y)/(maxy - miny))
+				# also flip the y since that's how graphics work
+				normv.y = 1-normv.y
+				print("normalized vertex is",normv)
+				uvs[i] =  normv
+				i+=1
+			mesh_array[Mesh.ARRAY_TEX_UV] = uvs
+			mesh.surface_remove(0)
+			# re add the data so the uvs get baked in properly
+			mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,mesh_array)
+			
+			var mat: StandardMaterial3D = StandardMaterial3D.new()
+			mat.albedo_texture = testicon
+			mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+			mesh.surface_set_material(0,mat)
+			m.mesh = mesh
+			
+			
