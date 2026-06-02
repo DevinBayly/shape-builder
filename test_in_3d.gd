@@ -149,16 +149,16 @@ func _input(event: InputEvent) -> void:
 			hovered_element.tri_clicked()
 			triangle_vertices.push_back(hovered_element)
 			print("tri verts are ", triangle_vertices)
-			#if triangle_vertices.size()==3:
-				#create_colored_geometry(triangle_vertices)
-				#_on_clear_pressed()
+			if triangle_vertices.size()==3:
+				create_colored_geometry(triangle_vertices)
+				_on_clear_pressed()
 			# check if we have a 			
 
 func create_colored_geometry(verts):
 	var vpos = []
 	for vert in verts:
 		vpos.push_back(vert.position)
-	var vertices = PackedVector2Array()
+	var vertices = PackedVector3Array()
 	var uvs = PackedVector2Array()
 
 	for v in vpos:
@@ -166,7 +166,7 @@ func create_colored_geometry(verts):
 		uvs.push_back(Vector2(0, 0))
 
 	# Initialize the ArrayMesh.
-	var arr_mesh = ArrayMesh.new()
+	var arr_mesh:ArrayMesh = ArrayMesh.new()
 	var arrays = []
 	arrays.resize(Mesh.ARRAY_MAX)
 	arrays[Mesh.ARRAY_VERTEX] = vertices
@@ -175,10 +175,14 @@ func create_colored_geometry(verts):
 	
 	# Create the Mesh.
 	arr_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-	var m = MeshInstance2D.new()
+	var mat = StandardMaterial3D.new()
+	mat.albedo_color = Color(randf(),randf(),randf())
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	arr_mesh.surface_set_material(0,mat)
+	var m = MeshInstance3D.new()
 	m.mesh = arr_mesh
+	
 	# make this a random color
-	m.modulate = Color(randf(),randf(),randf(),.2)
 	add_child(m)
 
 func vert_was_hovered(vert):
@@ -186,4 +190,9 @@ func vert_was_hovered(vert):
 
 
 func _on_clear_pressed() -> void:
+	#clear the triangle list
+	for v in triangle_vertices:
+		# turn off their selection colors
+		v.tri_cleared()
+	triangle_vertices = []
 	pass # Replace with function body.
