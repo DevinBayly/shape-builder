@@ -29,12 +29,6 @@ radius = 0.2
 radius = 0.2
 height = 0.4
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jt4q5"]
-albedo_color = Color(0.2676908, 0.7843832, 0, 1)
-
-[sub_resource type="SphereMesh" id="SphereMesh_orqyl"]
-material = SubResource("StandardMaterial3D_jt4q5")
-
 [node name="test_in_3d" type="Node3D" unique_id=216157647]
 script = ExtResource("1_bh3cg")
 limiter_restart = 0.5
@@ -107,9 +101,7 @@ offset_bottom = 125.0
 text = "draw im
 "
 
-[node name="ray_to" type="MeshInstance3D" parent="." unique_id=60533474]
-mesh = SubResource("SphereMesh_orqyl")
-
 [connection signal="input_event" from="wall" to="." method="_on_wall_input_event"]
+[connection signal="pressed" from="clear" to="." method="_on_clear_pressed"]
 
 [editable path="Character"]
