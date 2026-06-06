@@ -108,70 +108,7 @@ var triangle_vertices=[]
 var hovered_element
 
 
-func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
-		var e: InputEventMouseButton = event
-		if e.double_click:
-			print("yes double clicked")
-			if col:
-				print("position",col_pos)
-				# maek a vertex there
-				var new_vert = vert3d.instantiate()
-				new_vert.position = col_pos
-				new_vert.vertexhovered.connect(vert_was_hovered)
-				add_child(new_vert)
-
-				# this just makes sure we have a list of the edges
-				all_vertx.push_back(col_pos)
-				if not innerButton.is_pressed():
-					if prev:
-						edges.push_back([prev,new_vert])
-						prev = new_vert
-					else:
-						prev = new_vert
-				if innerButton.is_pressed():
-					# how can we make sure the right point relations get made?
-					# intersections will all be 2d so we need to add a third value
-					var cam: Camera3D = get_viewport().get_camera_3d()
-					var depth=20
-					for intersect in last_intersections:
-					   
-						# do a physics calculation of intersection of new ray 
-						var space_state = get_world_3d().direct_space_state
-						   # use global coordinates, not local to node
-						var from = cam.project_ray_origin(intersect)
-						var rect = get_viewport().get_visible_rect()
-						var to = cam.project_ray_normal(intersect)*depth + from
-						#var to = Vector3(0,0,-20)
-						var query = PhysicsRayQueryParameters3D.create(from,to)
-						query.collide_with_areas =true
-						query.collide_with_bodies=false
-						var result = space_state.intersect_ray(query)
-						var intersect_3d = result["position"]
-					   
-						var too_close = false
-						# check whether or not the intersection is too close to a pre-existing point
-						for overt in all_vertx:
-							if overt.distance_to(intersect_3d) < dist_threshold:
-								too_close = true
-								break
-						if too_close:
-							continue
-						var new_intersect_vert = vert3d.instantiate()
-						new_intersect_vert.vertexhovered.connect(vert_was_hovered)
-						new_intersect_vert.position = intersect_3d
-						add_child(new_intersect_vert)
-						all_vertx.push_back(intersect_3d)
-						
-		elif e.pressed and hovered_element and tri_button.is_pressed():
-			# turn the hovered_element on for it's triangle 
-			hovered_element.tri_clicked()
-			triangle_vertices.push_back(hovered_element)
-			print("tri verts are ", triangle_vertices)
-			if triangle_vertices.size()==3:
-				create_colored_geometry(triangle_vertices)
-				_on_clear_pressed()
-			# check if we have a 			
+	
 
 func create_colored_geometry(verts):
 	var vpos = []
@@ -279,3 +216,68 @@ func _on_drawim_pressed() -> void:
 			m.mesh = mesh
 			
 			
+
+
+func _on_xr_controller_3d_button_pressed(name: String) -> void:
+	if name == "ax_button":
+		print("yes double clicked")
+		if col:
+			print("position",col_pos)
+			# maek a vertex there
+			var new_vert = vert3d.instantiate()
+			new_vert.position = col_pos
+			new_vert.vertexhovered.connect(vert_was_hovered)
+			add_child(new_vert)
+
+			# this just makes sure we have a list of the edges
+			all_vertx.push_back(col_pos)
+			if not innerButton.is_pressed():
+				if prev:
+					edges.push_back([prev,new_vert])
+					prev = new_vert
+				else:
+					prev = new_vert
+	elif name == "trigger":
+		# how can we make sure the right point relations get made?
+		# intersections will all be 2d so we need to add a third value
+		var cam: Camera3D = get_viewport().get_camera_3d()
+		var depth=20
+		for intersect in last_intersections:
+		   
+			# do a physics calculation of intersection of new ray 
+			var space_state = get_world_3d().direct_space_state
+			   # use global coordinates, not local to node
+			var from = cam.project_ray_origin(intersect)
+			var rect = get_viewport().get_visible_rect()
+			var to = cam.project_ray_normal(intersect)*depth + from
+			#var to = Vector3(0,0,-20)
+			var query = PhysicsRayQueryParameters3D.create(from,to)
+			query.collide_with_areas =true
+			query.collide_with_bodies=false
+			var result = space_state.intersect_ray(query)
+			var intersect_3d = result["position"]
+		   
+			var too_close = false
+			# check whether or not the intersection is too close to a pre-existing point
+			for overt in all_vertx:
+				if overt.distance_to(intersect_3d) < dist_threshold:
+					too_close = true
+					break
+			if too_close:
+				continue
+			var new_intersect_vert = vert3d.instantiate()
+			new_intersect_vert.vertexhovered.connect(vert_was_hovered)
+			new_intersect_vert.position = intersect_3d
+			add_child(new_intersect_vert)
+			all_vertx.push_back(intersect_3d)
+						
+	elif name == "by_button":
+		# turn the hovered_element on for it's triangle 
+		hovered_element.tri_clicked()
+		triangle_vertices.push_back(hovered_element)
+		print("tri verts are ", triangle_vertices)
+		if triangle_vertices.size()==3:
+			create_colored_geometry(triangle_vertices)
+			_on_clear_pressed()
+		# check if we have a 			
+	pass # Replace with function body.
