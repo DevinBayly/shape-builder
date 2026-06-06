@@ -42,7 +42,7 @@ func _physics_process(delta: float) -> void:
 
 		# if we have a
 		# NOTE need to come up with a check to make sure motion has occurred
-		if innerButton.is_pressed():
+		if trigger_touched:
 			last_intersections=[]
 			if edges.size() > 1:
 				var edges_2d= []
@@ -87,12 +87,13 @@ func _physics_process(delta: float) -> void:
 								# check for ccw because that will only happen if the intersection is between 
 								# using algorithm from bryce boe
 								
-								var mark = ColorRect.new()
-								mark.size = Vector2(5,5)
-								mark.color = Color("green")
-								mark.position = intercept
-								add_child(mark)
+								#var mark = ColorRect.new()
+								#mark.size = Vector2(5,5)
+								#mark.color = Color("green")
+								#mark.position = intercept
+								#add_child(mark)
 								# add intercepts to lastPoint_positions
+								print(intercept)
 								last_intersections.push_back(intercept)
 								
 						else:
@@ -219,6 +220,7 @@ func _on_drawim_pressed() -> void:
 
 
 func _on_xr_controller_3d_button_pressed(name: String) -> void:
+	print(name)
 	if name == "ax_button":
 		print("yes double clicked")
 		if col:
@@ -237,7 +239,9 @@ func _on_xr_controller_3d_button_pressed(name: String) -> void:
 					prev = new_vert
 				else:
 					prev = new_vert
-	elif name == "trigger":
+	elif name=="trigger_touch":
+		trigger_touched =true
+	elif name == "trigger_click":
 		# how can we make sure the right point relations get made?
 		# intersections will all be 2d so we need to add a third value
 		var cam: Camera3D = get_viewport().get_camera_3d()
@@ -280,4 +284,11 @@ func _on_xr_controller_3d_button_pressed(name: String) -> void:
 			create_colored_geometry(triangle_vertices)
 			_on_clear_pressed()
 		# check if we have a 			
+	pass # Replace with function body.
+
+var trigger_touched=false
+func _on_xr_controller_3d_button_released(name: String) -> void:
+	print(name)
+	if name=="trigger_touch":
+		trigger_touched =false
 	pass # Replace with function body.
