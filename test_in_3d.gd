@@ -153,7 +153,7 @@ func _on_clear_pressed() -> void:
 	triangle_vertices = []
 	pass # Replace with function body.
 
-func _on_drawim_pressed() -> void:
+func draw_im() -> void:
 	# go get all the other mesh2ds 
 	# find the min and max of all their points
 	# go back through each and update it's texture coordinates, and add a texture to the shape
@@ -281,7 +281,10 @@ func _on_xr_controller_3d_button_pressed(name: String) -> void:
 		if triangle_vertices.size()==3:
 			create_colored_geometry(triangle_vertices)
 			_on_clear_pressed()
-		# check if we have a 			
+		# check if we have a
+	elif name == "grip_click":
+		# use this to draw over the triangles
+		draw_im()
 	pass # Replace with function body.
 
 var trigger_touched=false
