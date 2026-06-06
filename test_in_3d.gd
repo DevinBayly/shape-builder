@@ -7,10 +7,26 @@ var limiter=0
 @onready var tri_button: Button = $tri_button
 @export var limiter_restart:float =3
 @onready var testicon = preload("res://icon.svg")
+
+
+var xr_interface: XRInterface
 var cam
-func _ready() -> void:
+
+func _ready():
 	cam = get_viewport().get_camera_3d()
-	pass
+
+	xr_interface = XRServer.find_interface("OpenXR")
+	if xr_interface and xr_interface.is_initialized():
+		print("OpenXR initialized successfully")
+
+		# Turn off v-sync!
+		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+
+		# Change our main viewport to output to the HMD
+		get_viewport().use_xr = true
+	else:
+		print("OpenXR not initialized, please check if your headset is connected")
+
 
 var col
 var col_pos
