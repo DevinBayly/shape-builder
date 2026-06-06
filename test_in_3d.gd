@@ -10,10 +10,10 @@ var limiter=0
 
 
 var xr_interface: XRInterface
-var cam
+@onready var cam = %calc_cam
 
 func _ready():
-	cam = get_viewport().get_camera_3d()
+	
 
 	xr_interface = XRServer.find_interface("OpenXR")
 	if xr_interface and xr_interface.is_initialized():
@@ -46,7 +46,6 @@ func _physics_process(delta: float) -> void:
 			last_intersections=[]
 			if edges.size() > 1:
 				var edges_2d= []
-				var cam = get_viewport().get_camera_3d()
 				var col_pos_2d = cam.unproject_position(col_pos)
 				for e in edges:
 					var start = e[0]
@@ -244,7 +243,6 @@ func _on_xr_controller_3d_button_pressed(name: String) -> void:
 	elif name == "trigger_click":
 		# how can we make sure the right point relations get made?
 		# intersections will all be 2d so we need to add a third value
-		var cam: Camera3D = get_viewport().get_camera_3d()
 		var depth=20
 		for intersect in last_intersections:
 		   
