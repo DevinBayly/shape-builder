@@ -27,6 +27,7 @@ func _physics_process(delta: float) -> void:
 		# if we have a
 		# NOTE need to come up with a check to make sure motion has occurred
 		if innerButton.is_pressed():
+				
 			last_intersections=[]
 			if edges.size() > 1:
 				var edges_2d= []
@@ -84,13 +85,57 @@ func _physics_process(delta: float) -> void:
 							continue
 
 var prev: Node3D = null
+var corners = []
 var edges = []
 var dist_threshold = 1
 var last_intersections = []
 var all_vertx: Array[Vector3] = []
 var triangle_vertices=[]
 var hovered_element
-
+var center = Vector3(0,0,0)
+func calc_center():
+	var total = Vector3(0,0,0)
+	for v in all_vertx:
+		total +=v
+	center.x = total.x/all_vertx.size()
+	center.y = total.y/all_vertx.size()
+	center.z = total.z/all_vertx.size()
+func uv_edges():
+	for pair in edges:
+		var start = pair[0]
+		var end = pair[1]
+		var dif = end.position - start.position
+		# dir from center
+		var centerdif = center - start.position
+		# figure out if the horizontal dif is bigger than the vertical
+		if abs(dif.x) > abs(dif.y):
+			# we have a horizontal edge
+			# figure out our v coordinate to hold steady
+			var v = 1
+			if centerdif.y > 0:
+				# center point is above our starting vector so we are a horizontal "top" line with a 0 as v
+				v = 0
+			# keep in mind that we might need to figure out if we are a top or bottom horizontal
+			if dif.x >0:
+				start.uv = Vector2(0,v)
+				end.uv = Vector2(1,v)
+			else:
+				start.uv = Vector2(1,v)
+				end.uv = Vector2(0,v)
+			# figure out which one needs to have the 0 vs 1 in the u coordinate
+		else:
+			# we have a vertical edge
+			# figure out our u coordinate to hold steady
+			var u =1
+			if centerdif.x >0:
+				#means center point is to the right of our spot so we are a vertical line with 0 as our u
+				u =0
+			if dif.y>0:
+				start.uv = Vector2(u,0)
+				end.uv = Vector2(u,1)
+			else:
+				start.uv = Vector2(u,1)
+				end.uv = Vector2(u,0)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -107,6 +152,7 @@ func _input(event: InputEvent) -> void:
 
 				# this just makes sure we have a list of the edges
 				all_vertx.push_back(col_pos)
+				calc_center()
 				if not innerButton.is_pressed():
 					if prev:
 						edges.push_back([prev,new_vert])
@@ -263,3 +309,8 @@ func _on_drawim_pressed() -> void:
 			m.mesh = mesh
 			
 			
+
+
+func _on_button_pressed() -> void:
+	uv_edges()
+	pass # Replace with function body.

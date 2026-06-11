@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://e8a3a86bmtfy"]
 
 [ext_resource type="PackedScene" uid="uid://cc1m2a1obsyn4" path="res://addons/fpc/character.tscn" id="1_0nhq1"]
-[ext_resource type="Script" uid="uid://6ashm4vo0bse" path="res://test_in_3d.gd" id="1_bh3cg"]
+[ext_resource type="Script" uid="uid://cwrax3wsfqyb7" path="res://test_in_3d.gd" id="1_bh3cg"]
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_bh3cg"]
 
@@ -41,7 +41,6 @@ shape = SubResource("WorldBoundaryShape3D_bh3cg")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="wall" unique_id=1697309635]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
-visible = false
 mesh = SubResource("QuadMesh_0nhq1")
 
 [node name="floor" type="StaticBody3D" parent="." unique_id=414307982]
@@ -51,6 +50,9 @@ shape = SubResource("WorldBoundaryShape3D_bh3cg")
 
 [node name="Character" parent="." unique_id=532105912 instance=ExtResource("1_0nhq1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Camera" parent="Character/Head" index="0"]
+size = 20.0
 
 [node name="RayCast3D" type="RayCast3D" parent="Character/Head/Camera" index="0" unique_id=1580753883]
 unique_name_in_owner = true
@@ -103,6 +105,7 @@ text = "draw im
 "
 
 [connection signal="input_event" from="wall" to="." method="_on_wall_input_event"]
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="clear" to="." method="_on_clear_pressed"]
 [connection signal="pressed" from="drawim" to="." method="_on_drawim_pressed"]
 
