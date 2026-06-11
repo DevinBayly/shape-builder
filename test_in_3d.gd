@@ -19,6 +19,7 @@ func _physics_process(delta: float) -> void:
 	col_pos = ray.get_collision_point()
 	limiter-=delta
 	if col and limiter<0:
+		print()
 		limiter = limiter_restart
 		#print("collision is ",col)
 		intersector.position = col_pos
@@ -29,6 +30,7 @@ func _physics_process(delta: float) -> void:
 		if innerButton.is_pressed():
 				
 			last_intersections=[]
+			last_intersections_uvs = []
 			if edges.size() > 1:
 				var edges_2d= []
 				var cam = get_viewport().get_camera_3d()
@@ -36,17 +38,18 @@ func _physics_process(delta: float) -> void:
 				for e in edges:
 					var start = e[0]
 					var end = e[1]
-					edges_2d.push_back([cam.unproject_position(start.position),
-					cam.unproject_position(end.position)
-					])
+					start.unprojectedPosition = cam.unproject_position(start.position)
+					end.unprojectedPosition = cam.unproject_position(end.position)
 				# check intersections of all the edges in cardinal directions from the point on the screen
 				# make a vector at this current position,
 				var directions = [[200,0.01],[0.01,200],[-200,0.01],[0.01,-200]]
 				#var directions = [[0.01,200]]
-				var closed =  edges_2d + [
-					[edges_2d[-1][1],edges_2d[0][0]]
+				var closed =  edges + [
+					[edges[-1][1],edges[0][0]]
 				]
+				# NOTE I'm adding in a part that stops searching edge for more intersections after one passes
 				for edge in closed:
+					print(edge)
 					for dir in directions: 
 						var e2 = col_pos_2d +Vector2(randf()/100,randf()/100)
 						var e1 = Vector2(e2.x + dir[0],e2.y +dir[1]) +  Vector2(randf()/100,randf()/100)
@@ -55,10 +58,9 @@ func _physics_process(delta: float) -> void:
 						# go over the other edges_2d and see if
 						# include the final edge of last to first
 						
-						#var closed_edges = edges_2d + [edges_2d[-1],edges_2d[0]]
 					
-						var i1 = edge[0] + Vector2(randf()/100,randf()/100)
-						var i2 = edge[1] + Vector2(randf()/100,randf()/100)
+						var i1 = edge[0].unprojectedPosition + Vector2(randf()/100,randf()/100)
+						var i2 = edge[1].unprojectedPosition + Vector2(randf()/100,randf()/100)
 						var im = (i2.y - i1.y)/(i2.x - i1.x)
 						if abs(em - im) >.001:
 							var intersection_x = (-i1.y + e1.y -e1.x*em + i1.x*im)/(im - em)
@@ -79,16 +81,29 @@ func _physics_process(delta: float) -> void:
 								add_child(mark)
 								# add intercepts to lastPoint_positions
 								last_intersections.push_back(intercept)
-								
+								print(edge,dir)
+								# use start and end points of edge to figure out in normalized coords how far along the intersection the new point is
+								var start = edge[0].unprojectedPosition
+								var end = edge[1].unprojectedPosition
+								var edgeDelta = end-start
+								var partial_delta = intercept - start
+								var ratio = partial_delta.length()/edgeDelta.length()
+								# work out the mixture between start and end uv to assign
+								var new_uv = edge[0].uv + ratio * (edge[1].uv - edge[0].uv)  
+								last_intersections_uvs.push_back(new_uv)
+								break
 						else:
 							#print("this edge is too parallel to one of the cardinal directions")
 							continue
+			print(last_intersections,last_intersections_uvs)
 
 var prev: Node3D = null
 var corners = []
 var edges = []
 var dist_threshold = 1
 var last_intersections = []
+# helps us figure out the uvs of the border points created at intersections
+var last_intersections_uvs =[]
 var all_vertx: Array[Vector3] = []
 var triangle_vertices=[]
 var hovered_element
@@ -101,7 +116,7 @@ func calc_center():
 	center.y = total.y/all_vertx.size()
 	center.z = total.z/all_vertx.size()
 func uv_edges():
-	for pair in edges:
+	for pair in edges:		
 		var start = pair[0]
 		var end = pair[1]
 		var dif = end.position - start.position
@@ -164,6 +179,7 @@ func _input(event: InputEvent) -> void:
 					# intersections will all be 2d so we need to add a third value
 					var cam: Camera3D = get_viewport().get_camera_3d()
 					var depth=20
+					var i = 0
 					for intersect in last_intersections:
 					   
 						# do a physics calculation of intersection of new ray 
@@ -188,10 +204,12 @@ func _input(event: InputEvent) -> void:
 						if too_close:
 							continue
 						var new_intersect_vert = vert3d.instantiate()
+						new_intersect_vert.uv = last_intersections_uvs[i]
 						new_intersect_vert.vertexhovered.connect(vert_was_hovered)
 						new_intersect_vert.position = intersect_3d
 						add_child(new_intersect_vert)
 						all_vertx.push_back(intersect_3d)
+						i+=1
 						
 		elif e.pressed and hovered_element and tri_button.is_pressed():
 			# turn the hovered_element on for it's triangle 
