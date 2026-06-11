@@ -111,10 +111,10 @@ func uv_edges():
 		if abs(dif.x) > abs(dif.y):
 			# we have a horizontal edge
 			# figure out our v coordinate to hold steady
-			var v = 1
+			var v = 0
 			if centerdif.y > 0:
 				# center point is above our starting vector so we are a horizontal "top" line with a 0 as v
-				v = 0
+				v = 1
 			# keep in mind that we might need to figure out if we are a top or bottom horizontal
 			if dif.x >0:
 				start.uv = Vector2(0,v)
@@ -131,11 +131,11 @@ func uv_edges():
 				#means center point is to the right of our spot so we are a vertical line with 0 as our u
 				u =0
 			if dif.y>0:
-				start.uv = Vector2(u,0)
-				end.uv = Vector2(u,1)
-			else:
 				start.uv = Vector2(u,1)
 				end.uv = Vector2(u,0)
+			else:
+				start.uv = Vector2(u,0)
+				end.uv = Vector2(u,1)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -209,11 +209,12 @@ func create_colored_geometry(verts):
 		vpos.push_back(vert.position)
 	var vertices = PackedVector3Array()
 	var uvs = PackedVector2Array()
-
+	var ind =0
 	for v in vpos:
+		var vert3d =verts[ind]
 		vertices.push_back(v)
-		uvs.push_back(Vector2(0, 0))
-
+		uvs.push_back(vert3d.uv)
+		ind+=1
 	# Initialize the ArrayMesh.
 	var arr_mesh:ArrayMesh = ArrayMesh.new()
 	var arrays = []
@@ -254,29 +255,8 @@ func _on_drawim_pressed() -> void:
 	# make one big ass mesh using all the triangles, and set all the uvs to correct values, and then at the end just assign a single texture
 	var meshes = get_children()
 	print("trying something different")
-	var minx = get_viewport().get_visible_rect().size.x + 500
-	var miny = get_viewport().get_visible_rect().size.y + 500
-	var maxx = -100
-	var maxy = -100
-	for m in meshes:
-		if m is MeshInstance3D:
-			var mesh:ArrayMesh = m.mesh
-			# iterate over the vertices in the triangle
-			var mesh_array = mesh.surface_get_arrays(0)
-			var vertices = mesh_array[Mesh.ARRAY_VERTEX]
-			
-			for v3d in vertices:
-				# convert back to the screen coordinates
-				var v = cam.unproject_position(v3d)
-				if v.x >maxx:
-					maxx = v.x
-				if v.x < minx:
-					minx= v.x
-				if v.y <miny:
-					miny = v.y
-				if v.y > maxy:
-					maxy=v.y
-	print("min ",minx," ",miny," and max values ",maxx," ",maxy)
+	
+	
 	# use the min and max values to help us establish uv coordinates
 	for m in meshes:
 		if m is MeshInstance3D:
@@ -285,17 +265,7 @@ func _on_drawim_pressed() -> void:
 			var mesh_array = mesh.surface_get_arrays(0)
 			var vertices = mesh_array[Mesh.ARRAY_VERTEX]
 			var uvs = mesh_array[Mesh.ARRAY_TEX_UV]
-			var i=0
-			for v3d in vertices:
-				var v = cam.unproject_position(v3d)
-				print("vertex", v)
-				# normalize the v and store that as the uv coordinate
-				var normv = Vector2((maxx - v.x)/(maxx - minx),(maxy - v.y)/(maxy - miny))
-				# also flip the y since that's how graphics work
-				normv.y = 1-normv.y
-				print("normalized vertex is",normv)
-				uvs[i] =  normv
-				i+=1
+			
 			mesh_array[Mesh.ARRAY_TEX_UV] = uvs
 			mesh.surface_remove(0)
 			# re add the data so the uvs get baked in properly
