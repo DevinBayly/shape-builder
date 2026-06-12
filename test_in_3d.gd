@@ -154,7 +154,7 @@ func _input(event: InputEvent) -> void:
 			print("tri verts are ", triangle_vertices)
 			if triangle_vertices.size()==3:
 				create_colored_geometry(triangle_vertices)
-				_on_clear_pressed()
+				clear_triangles_list()
 			# check if we have a 			
 
 func create_colored_geometry(verts):
@@ -191,13 +191,23 @@ func create_colored_geometry(verts):
 func vert_was_hovered(vert):
 	hovered_element = vert		
 
-
-func _on_clear_pressed() -> void:
+func remove_meshes():
+	# also remove all meshes
+	var meshes = get_children()
+	
+	for m in meshes:
+		if m is MeshInstance3D:
+			m.queue_free()
+func clear_triangles_list():
 	#clear the triangle list
 	for v in triangle_vertices:
 		# turn off their selection colors
 		v.tri_cleared()
 	triangle_vertices = []
+func _on_clear_pressed() -> void:
+	clear_triangles_list()
+	remove_meshes()
+	
 	pass # Replace with function body.
 
 func _on_drawim_pressed() -> void:
