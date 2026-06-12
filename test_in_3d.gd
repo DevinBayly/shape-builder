@@ -28,7 +28,6 @@ func _physics_process(delta: float) -> void:
 		# if we have a
 		# NOTE need to come up with a check to make sure motion has occurred
 		if innerButton.is_pressed():
-				
 			last_intersections=[]
 			last_intersections_uvs = []
 			if edges.size() > 1:
@@ -48,6 +47,10 @@ func _physics_process(delta: float) -> void:
 					[edges[-1][1],edges[0][0]]
 				]
 				# NOTE I'm adding in a part that stops searching edge for more intersections after one passes
+				# this will have the pairs of intersections that help us figure out what the uv coords should be for the point added in
+				# structure will be [[vertical],[horizontal]] 
+				# horizontal will be left to right
+				# vertical top to bottom 
 				for edge in closed:
 					print(edge)
 					for dir in directions: 
@@ -180,6 +183,8 @@ func _input(event: InputEvent) -> void:
 					var cam: Camera3D = get_viewport().get_camera_3d()
 					var depth=20
 					var i = 0
+					var horizontal_intersections = []
+					var vertical_intersections = []
 					for intersect in last_intersections:
 					   
 						# do a physics calculation of intersection of new ray 
@@ -207,10 +212,45 @@ func _input(event: InputEvent) -> void:
 						new_intersect_vert.uv = last_intersections_uvs[i]
 						new_intersect_vert.vertexhovered.connect(vert_was_hovered)
 						new_intersect_vert.position = intersect_3d
+						new_intersect_vert.unprojectedPosition = intersect
 						add_child(new_intersect_vert)
 						all_vertx.push_back(intersect_3d)
 						i+=1
-						
+						# compare with new vert to help give it the right UV coords
+						var dif =  new_intersect_vert.position -  new_vert.position 
+						if abs(dif.x ) > abs(dif.y):
+							# point is located horizontally out from the inner new vert
+							if dif.x >0:
+								# point is to the right
+								horizontal_intersections.push_back(new_intersect_vert)
+							else:
+								# point is to the left
+								horizontal_intersections.push_front(new_intersect_vert)
+						else:
+							if dif.y>0:
+								# point is below
+								vertical_intersections.push_back(new_intersect_vert)
+							else:
+								# point is above
+								vertical_intersections.push_front(new_intersect_vert)
+							# means intersection is below 
+					# now we can interpolate a uv for the new vert in the middle
+					# we do have to use 2d projections of the points though
+					new_vert.unprojectedPosition = cam.unproject_position(new_vert.position)
+					var horizontal_delta = horizontal_intersections[1].unprojectedPosition-horizontal_intersections[0].unprojectedPosition
+					var partial_horizontal = new_vert.unprojectedPosition - horizontal_intersections[0].unprojectedPosition
+					var horizontal_ratio = partial_horizontal.length()/horizontal_delta.length()
+					# calculate amount of u coordinate to give to new vert
+					var v = horizontal_intersections[0].uv.y + horizontal_ratio*(horizontal_intersections[1].uv.y - horizontal_intersections[0].uv.y)
+					
+					
+					var vertical_delta = vertical_intersections[1].unprojectedPosition-vertical_intersections[0].unprojectedPosition
+					var partial_vertical = new_vert.unprojectedPosition - vertical_intersections[0].unprojectedPosition
+					var vertical_ratio = partial_vertical.length()/vertical_delta.length()
+					# calculate amount of u coordinate to give to new vert
+					var u = vertical_intersections[0].uv.x + vertical_ratio*(vertical_intersections[1].uv.x - vertical_intersections[0].uv.x)
+					new_vert.uv = Vector2(u,v)
+					
 		elif e.pressed and hovered_element and tri_button.is_pressed():
 			# turn the hovered_element on for it's triangle 
 			hovered_element.tri_clicked()

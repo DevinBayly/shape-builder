@@ -6,6 +6,8 @@ var included_in_tri = false
 var hovered = false
 var uv = Vector2()
 var unprojectedPosition = Vector2()
+# this array is used when we want to put 
+var interpolatingNeighbors
 func tri_clicked():
 	included_in_tri = true
 	turn_on()
