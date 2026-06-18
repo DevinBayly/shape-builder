@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://dfjyu1b54sps2"]
+
+[ext_resource type="PackedScene" uid="uid://uio1i5be8av0" path="res://vert_3d.tscn" id="1_vafga"]
+
+[node name="ortho_camera_test" type="Node3D" unique_id=315326745]
+
+[node name="vert_3d" parent="." unique_id=1370350870 instance=ExtResource("1_vafga")]
+
+[node name="vert_3d2" parent="." unique_id=872875797 instance=ExtResource("1_vafga")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4959755, 5.703333, 0)
+
+[node name="vert_3d9" parent="." unique_id=2087779520 instance=ExtResource("1_vafga")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.644852, 3.3930593, 0.60841846)
+
+[node name="vert_3d3" parent="." unique_id=1808951649 instance=ExtResource("1_vafga")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.2132654, 5.703333, 0)
+
+[node name="vert_3d4" parent="." unique_id=1410444028 instance=ExtResource("1_vafga")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.823475, 0.13197374, 0)
+
+[node name="vert_3d5" parent="." unique_id=1279802174 instance=ExtResource("1_vafga")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4112306, 0, 0)
+
+[node name="vert_3d6" parent="." unique_id=1831448626 instance=ExtResource("1_vafga")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5842249, 5.703333, 0)
+
+[node name="vert_3d7" parent="." unique_id=309377816 instance=ExtResource("1_vafga")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.946932, 5.703333, 0)
+
+[node name="vert_3d8" parent="." unique_id=1485276517 instance=ExtResource("1_vafga")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.946932, 0.13197374, 0)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=254825159]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.4646845, 4.4155846, 5.871617)
+projection = 1
+size = 9.654
