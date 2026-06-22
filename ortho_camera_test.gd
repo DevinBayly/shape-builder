@@ -45,8 +45,9 @@ func _ready() -> void:
 	# get normal from cross product
 	var v3 = v1.cross(v2)
 	#v3.z*=-1
-	if v3.z<0:
-		v3.z*=-1
+	#if v3.z<0:
+		#v3.z*=-1
+	#v3*=-1
 	print(v1,v2,v3)
 		 
 	
@@ -56,5 +57,6 @@ func _ready() -> void:
 	# figure out the vector that goes in the min to max direction, use the length of this to determine the size of the camera view
 	# get the furthest distance point, and set it as the size
 	cam.size = distances[0][1]
+	cam.look_at(center)
 	
 	
